@@ -110,3 +110,12 @@ export type GetAnimesRes = {
     };
   };
 };
+
+type RecommendationAnime = {
+  entry: Pick<Anime, "mal_id" | "url" | "images" | "title">;
+  url: string;
+  votes: number;
+};
+export type GetAnimeRecommentationRes = {
+  data: RecommendationAnime[];
+};

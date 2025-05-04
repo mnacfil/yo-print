@@ -9,6 +9,8 @@ import Pagination from "./components/pagination";
 import useUpdateUrl from "~/hooks/useUpdateURL";
 import ListSkeleton from "./components/list-skeleton";
 import ListEmpty from "./components/list-empty";
+import { Film, Home, RefreshCw } from "lucide-react";
+import { Button } from "~/components/ui/button";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -81,26 +83,18 @@ export default function Animes({ loaderData }: Route.ComponentProps) {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
-  let stack: string | undefined;
-
-  if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
-    details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
-    details = error.message;
-    stack = error.stack;
-  }
-
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      <h2>Error on animes page</h2>
-    </main>
+    <div className="container mx-auto px-4 py-16">
+      <div className="max-w-md mx-auto text-center">
+        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
+          <Film className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">Anime List Unavailable</h2>
+        <p className="text-muted-foreground mb-6">
+          We couldn't load the anime list right now. This could be due to a
+          temporary server issue or network problem.
+        </p>
+      </div>
+    </div>
   );
 }
