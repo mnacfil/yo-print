@@ -24,7 +24,7 @@ const Pagination = ({ currentPage, pagination, onClick }: Props) => {
   const start =
     pagination.current_page <= NUM_BUTTONS ? 1 : pagination.current_page - 1;
   const end =
-    pagination.current_page < NUM_BUTTONS
+    pagination.current_page <= NUM_BUTTONS
       ? NUM_BUTTONS
       : pagination.current_page + 9;
 

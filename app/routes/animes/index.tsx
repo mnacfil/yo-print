@@ -8,6 +8,7 @@ import useGetAnimes from "./hooks/useGetAnimes";
 import Pagination from "./components/pagination";
 import useUpdateUrl from "~/hooks/useUpdateURL";
 import ListSkeleton from "./components/list-skeleton";
+import ListEmpty from "./components/list-empty";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -44,22 +45,35 @@ export default function Animes({ loaderData }: Route.ComponentProps) {
     return <div>Something went wrong...</div>;
   }
 
+  const isEmpty = data.length === 0;
+
   return (
     <div className="space-y-6">
-      <Search value={query} onChange={(e) => setQuery(e.target.value)} />
+      <Search
+        value={query}
+        onChange={(e) => {
+          setQuery(e.target.value);
+        }}
+      />
       {isLoading ? (
         <ListSkeleton />
       ) : (
         <>
-          <List animes={data} />
-          <Pagination
-            currentPage={page}
-            pagination={pagination}
-            onClick={(page) => {
-              updateUrl({ key: "page", value: page.toString() });
-              setPage(page);
-            }}
-          />
+          {isEmpty ? (
+            <ListEmpty />
+          ) : (
+            <>
+              <List animes={data} />
+              <Pagination
+                currentPage={page}
+                pagination={pagination}
+                onClick={(page) => {
+                  updateUrl({ key: "page", value: page.toString() });
+                  setPage(page);
+                }}
+              />
+            </>
+          )}
         </>
       )}
     </div>

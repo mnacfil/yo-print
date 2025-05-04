@@ -1,24 +1,26 @@
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 
 type UrlParam = {
   key: string;
-  value?: string;
+  value?: string | null;
 };
 
 const useUpdateUrl = () => {
   const location = useLocation();
-  const pathname = location.pathname;
-  const navigate = useNavigate();
 
   const updateUrl = ({ key, value }: UrlParam) => {
-    const params = new URLSearchParams();
+    const currentParams = new URLSearchParams(location.search);
+
     if (value) {
-      params.set(key, value);
+      currentParams.set(key, value);
     } else {
-      params.delete(key);
+      currentParams.delete(key);
     }
-    const newUrl = `${pathname}?${params.toString()}`;
-    window.history.replaceState(null, "", newUrl);
+
+    const newSearch = currentParams.toString();
+    const newUrl = `${location.pathname}${newSearch ? `?${newSearch}` : ""}`;
+
+    window.history.replaceState({}, "", newUrl);
   };
 
   return {
