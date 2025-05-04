@@ -1,4 +1,4 @@
-import { getAnimeDetail } from "api/services/anime";
+import { getAnimeDetail } from "~/api/services/anime";
 import type { Route } from "./+types/index";
 import { isRouteErrorResponse } from "react-router";
 

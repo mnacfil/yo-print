@@ -1,7 +1,6 @@
-import apiClient from "api/client";
-import { API_ENDPOINTS } from "api/endpoints";
+import apiClient from "../client";
+import { API_ENDPOINTS } from "../endpoints";
 import type { GetAnimeDetailRes, GetAnimesRes } from "./types";
-import { data } from "react-router";
 
 export const getAnimes = async () => {
   const response = await apiClient<GetAnimesRes>(API_ENDPOINTS.GET_ANIME);

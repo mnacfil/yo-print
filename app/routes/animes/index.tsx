@@ -1,10 +1,17 @@
-import { getAnimes } from "api/services/anime";
+import { getAnimes } from "~/api/services/anime";
 import type { Route } from "./+types/index";
-import { isRouteErrorResponse, Link } from "react-router";
+import { isRouteErrorResponse, useSearchParams } from "react-router";
+import Search from "./components/search";
+import List from "./components/list";
+import { useState } from "react";
+import useGetAnimes from "./hooks/useGetAnimes";
+import Pagination from "./components/pagination";
+import useUpdateUrl from "~/hooks/useUpdateURL";
+import ListSkeleton from "./components/list-skeleton";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Seach for favorite anime" },
+    { title: "Search for favorite anime" },
     { name: "description", content: "Thousand of anime's" },
   ];
 }
@@ -15,27 +22,46 @@ export async function loader() {
 }
 
 export default function Animes({ loaderData }: Route.ComponentProps) {
-  const animes = loaderData.data;
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("q") || "");
+  const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
+
+  const {
+    isError,
+    isLoading,
+    data: { data, pagination },
+  } = useGetAnimes({
+    queryParams: {
+      page,
+      q: query,
+    },
+    initialValue: loaderData,
+  });
+
+  const { updateUrl } = useUpdateUrl();
+
+  if (isError) {
+    return <div>Something went wrong...</div>;
+  }
+
   return (
-    <div>
-      <h2>Search Input</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {animes.map((anime) => (
-          <Link
-            to={`/anime/${anime.mal_id}`}
-            key={anime.mal_id}
-            className="border border-b shadow-md rounded-[26px] p-4"
-          >
-            <h3>{anime.title}</h3>
-            <div className="relative">
-              <img
-                src={anime.images.webp.image_url}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </Link>
-        ))}
-      </div>
+    <div className="space-y-6">
+      <Search value={query} onChange={(e) => setQuery(e.target.value)} />
+      {isLoading ? (
+        <ListSkeleton />
+      ) : (
+        <>
+          <List animes={data} />
+          <Pagination
+            currentPage={page}
+            pagination={pagination}
+            onClick={(page) => {
+              updateUrl({ key: "page", value: page.toString() });
+              setPage(page);
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }
